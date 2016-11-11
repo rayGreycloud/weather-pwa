@@ -28,7 +28,7 @@ self.addEventListener('install', function(e) {
     })
   );
 });
-
+// Update cache
 self.addEventListener('activate', function(e) {
   console.log('[ServiceWorker] Activate');
   e.waitUntil(
@@ -42,4 +42,14 @@ self.addEventListener('activate', function(e) {
     })
   );
   return self.clients.claim();
+});
+
+// Serve app shell from cache
+self.addEventListener('fetch', function(e) {
+  console.log('[ServiceWorker] Fetch', e.request.url);
+  e.respondWith(
+    caches.match(e.request).then(function(response) {
+      return response || fetch(e.request);
+    })
+  );
 });
